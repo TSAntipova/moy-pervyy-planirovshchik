@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Планировщик обращений арендаторов</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="script.js" defer></script>
+</head>
+<body>
+  <main>
+    <header>
+      <h1>Обращения арендаторов</h1>
+      <div class="actions">
+        <button id="new" class="primary" type="button">Новое обращение</button>
+        <button id="export" type="button">Скачать копию</button>
+        <button id="import" type="button">Восстановить из файла</button>
+        <input id="backup-file" type="file" accept=".json,application/json" hidden>
+      </div>
+    </header>
+    <nav aria-label="Разделы журнала">
+      <button type="button" data-view="week" aria-current="true">План на неделю</button>
+      <button type="button" data-view="overdue">Просроченные</button>
+      <button type="button" data-view="upcoming">Ближайшие сроки</button>
+      <button type="button" data-view="open">Все открытые</button>
+      <button type="button" data-view="archive">Архив</button>
+    </nav>
+    <details class="help">
+      <summary>Как пользоваться журналом</summary>
+      <p>Создайте обращение, укажите арендатора и опишите вопрос. Если срок уже известен, укажите его, чтобы обращение появилось в плане. Меняйте этап по мере работы. Закрытые обращения находятся в архиве.</p>
+      <p>Журнал хранится в этом профиле браузера по текущему адресу. Для правок используйте одну вкладку. Очистка данных сайта или потеря профиля может уничтожить записи, внесённые после последней копии.</p>
+      <p>Скачивайте копию после существенных изменений и перед восстановлением. Чтобы перенести журнал, откройте «Восстановить из файла», выберите JSON и подтвердите замену. Для просмотра чужой копии используйте отдельный профиль или сначала скачайте свой журнал. Если нужен общий актуальный снимок для просмотра, договоритесь, кто ведёт исходный журнал.</p>
+    </details>
+    <p id="notice" role="status"></p>
+    <p id="storage-error" class="error" role="alert"></p>
+    <p id="backup-error" class="error" role="alert"></p>
+    <button id="export-raw" type="button" hidden>Скачать исходные данные</button>
+    <button id="retry" type="button" hidden>Повторить чтение</button>
+    <section aria-labelledby="list-title">
+      <h2 id="list-title" tabindex="-1">План на неделю</h2>
+      <div id="week-controls" class="toolbar">
+        <button id="previous-week" type="button" aria-label="Предыдущая неделя">←</button>
+        <button id="next-week" type="button" aria-label="Следующая неделя">→</button>
+        <button id="current-week" type="button">Текущая неделя</button>
+        <label>Выбрать дату <input id="week-date" type="date" min="1900-01-01" max="9999-12-31"></label>
+        <p id="week-range" role="status"></p>
+      </div>
+      <div id="list-controls" class="toolbar">
+        <label>Поиск <input id="search" type="search" placeholder="Арендатор, описание или получатель"></label>
+        <label id="status-filter-label">Этап <select id="status-filter"><option value="">Все этапы</option></select></label>
+        <label id="priority-filter-label">Приоритет <select id="priority-filter"><option value="">Все приоритеты</option></select></label>
+        <label>Сортировка <select id="sort"></select></label>
+        <button id="reset" type="button" hidden>Сбросить фильтры</button>
+      </div>
+      <div id="list"></div>
+    </section>
+  </main>
+
+  <dialog id="editor" aria-labelledby="editor-title">
+    <form id="card-form" novalidate>
+      <h2 id="editor-title"></h2>
+      <div class="field"><label for="tenant">Название арендатора (обязательно)</label>
+        <input id="tenant" name="tenant" required aria-describedby="tenant-error" autofocus>
+        <span id="tenant-error" class="error"></span></div>
+      <div class="field"><label for="description">Описание обращения (обязательно)</label>
+        <textarea id="description" name="description" rows="4" required aria-describedby="description-error"></textarea>
+        <span id="description-error" class="error"></span></div>
+      <div class="dates">
+        <div class="field"><label for="receivedDate">Дата поступления (обязательно)</label>
+          <input id="receivedDate" name="receivedDate" type="date" min="1900-01-01" max="9999-12-31" required aria-describedby="receivedDate-error">
+          <span id="receivedDate-error" class="error"></span></div>
+        <div class="field"><label for="dueDate">Планируемый срок ответа</label>
+          <input id="dueDate" name="dueDate" type="date" min="1900-01-01" max="9999-12-31" aria-describedby="dueDate-error">
+          <span id="dueDate-error" class="error"></span></div>
+      </div>
+      <div class="field"><label for="assignee">Кому передано</label>
+        <input id="assignee" name="assignee" aria-describedby="assignee-error">
+        <span id="assignee-error" class="error"></span></div>
+      <div class="dates">
+        <div class="field"><label for="status">Этап</label><select id="status" name="status"></select></div>
+        <div class="field"><label for="priority">Приоритет</label><select id="priority" name="priority"></select></div>
+      </div>
+      <p id="form-error" class="error" role="alert"></p>
+      <div class="actions">
+        <button id="save" class="primary" type="submit">Сохранить</button>
+        <button id="cancel" type="button">Отмена</button>
+        <button id="reopen" type="button" hidden>Открыть повторно</button>
+        <button id="remove" class="danger" type="button" hidden>Удалить навсегда</button>
+      </div>
+    </form>
+  </dialog>
+  <dialog id="confirm" aria-labelledby="confirm-title" aria-describedby="confirm-detail">
+    <form method="dialog">
+      <h2 id="confirm-title"></h2>
+      <p id="confirm-detail" hidden></p>
+      <div class="actions">
+        <button value="cancel" autofocus>Отмена</button>
+        <button id="confirm-action" value="accept"></button>
+      </div>
+    </form>
+  </dialog>
+</body>
+</html>
