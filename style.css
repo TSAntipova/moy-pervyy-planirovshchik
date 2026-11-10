@@ -1,0 +1,72 @@
+:root {
+  font: 15px/1.5 "Avenir Next", "Century Gothic", "Trebuchet MS", system-ui, sans-serif;
+  color: #192e1c;
+  background: #eff5ed;
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+body { margin: 0; }
+main { max-width: 112rem; margin: auto; padding: clamp(1rem, 2.5vw, 2.75rem); }
+header, nav, .actions { display: flex; align-items: center; flex-wrap: wrap; gap: .65rem; }
+header { justify-content: space-between; margin-bottom: 1rem; }
+h1 { font-size: clamp(1.65rem, 3vw, 2.7rem); font-weight: 750; letter-spacing: -.03em; }
+h1, h2, h3, h4 { margin: 0 0 .5rem; line-height: 1.25; overflow-wrap: anywhere; }
+nav { gap: .25rem; padding-bottom: .5rem; border-bottom: 1px solid #b7c9b2; }
+nav button { border-color: transparent; background: transparent; }
+button, input, select, textarea { font: inherit; }
+button { border: 1px solid #81997b; border-radius: .5rem; padding: .45rem .7rem; background: #f7fbf5; color: inherit; cursor: pointer; }
+button:hover:not(:disabled) { background: #dcebd8; }
+button:disabled { opacity: .55; cursor: default; }
+button.primary, button.primary:hover:not(:disabled) { background: #285334; color: #f7fbf5; border-color: #285334; }
+button[aria-current] { background: #dcebd8; border-color: #285334; }
+:focus-visible { outline: 3px solid #306b3c; outline-offset: 2px; }
+#notice:empty, .error:empty { margin: 0; }
+#list { display: grid; gap: .75rem; }
+article { padding: 1rem; background: #f7fbf5; border: 1px solid #b7c9b2; border-radius: .2rem; overflow-wrap: anywhere; }
+.preview { white-space: pre-wrap; }
+dl { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 10rem), 1fr)); gap: .6rem; }
+dt { font-size: .85rem; color: #3b573d; }
+dd { margin: 0; }
+dialog { width: min(40rem, calc(100% - 2rem)); max-height: calc(100% - 2rem); border: 1px solid #81997b; border-radius: .75rem; padding: 1.25rem; color: inherit; overflow-wrap: anywhere; }
+dialog::backdrop { background: #172d1aaa; }
+.field { display: grid; gap: .25rem; margin-bottom: .75rem; min-width: 0; }
+.dates { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr)); gap: .5rem; }
+input, select, textarea { width: 100%; min-width: 0; border: 1px solid #81997b; border-radius: .4rem; padding: .45rem; background: #f7fbf5; color: inherit; }
+textarea { resize: vertical; }
+.error, .danger { color: #294c2d; }
+.toolbar { display: flex; flex-wrap: wrap; align-items: end; gap: .65rem; margin: .8rem 0; }
+.toolbar label { display: grid; gap: .2rem; min-width: 0; }
+.toolbar label:has(#search) { flex: 1 1 18rem; }
+.toolbar #week-range { margin: 0; padding: .5rem 0; font-weight: 600; }
+#list:has(> .week-day) { gap: 1px; padding: 1px; background: #b7c9b2; }
+#list:has(> .week-day) > p { grid-column: 1 / -1; margin: 0; padding: .65rem .75rem; background: #e7f0e3; }
+.week-day { min-width: 0; background: #f7fbf5; }
+.week-day > h3 {
+  margin: 0;
+  padding: .55rem .45rem;
+  border-bottom: 1px solid #b7c9b2;
+  background: #dcebd8;
+  text-align: center;
+  font-size: .9rem;
+}
+.week-day > p { margin: 0; padding: .65rem; color: #3b573d; font-size: .85rem; }
+.week-day article { border: 0; border-bottom: 1px solid #b7c9b2; border-radius: 0; }
+.week-day article:last-child { border-bottom: 0; }
+article:has([data-card-id]:enabled):hover { background: #edf5ea; }
+@media (min-width: 1200px) {
+  #list:has(> .week-day) { grid-template-columns: repeat(7, minmax(0, 1fr)); align-items: stretch; }
+  .week-day article { padding: .65rem .5rem; font-size: .85rem; }
+  .week-day .preview { margin: .35rem 0; }
+  .week-day dl { display: block; margin: .45rem 0; }
+  .week-day dl > div { padding: .2rem 0; border-top: 1px solid #d5e2d1; }
+  .week-day button { max-width: 100%; overflow-wrap: anywhere; font-size: .8rem; }
+}
+.deadline { display: inline-block; margin: .2rem 0; padding: .15rem .5rem; border-radius: .35rem; background: #dcebd8; font-weight: 600; }
+.deadline.overdue { color: #f7fbf5; background: #315739; }
+.help { margin: .75rem 0; }
+.help summary { cursor: pointer; width: fit-content; }
+.help p { max-width: 75ch; }
+article:has([data-card-id]:enabled) { cursor: pointer; }
+
+.error:not(:empty) { font-weight: 650; }
+input[aria-invalid="true"], textarea[aria-invalid="true"] { border: 2px solid #315739; }
